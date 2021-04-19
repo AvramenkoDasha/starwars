@@ -1,0 +1,70 @@
+<div class="content">
+  <meta charset="utf-8">
+
+  <div class="card-header">
+    <h1 mat-dialog-title>Карточка фильма</h1>
+  </div>
+
+  <mat-dialog-content>
+    <form>
+      <app-card [fields]="fields" [data]="data"></app-card>
+
+      <div class="form-group" [style.display]="hideFormGroup || !characters.length ? 'none' : 'grid'">
+        <label for="characters">Персонажи</label>
+        <div class="form-group__select-and-button">
+          <mat-select id="characters" [(value)]="characterId">
+            <mat-option *ngFor="let character of characters" [value]="character.id">
+              {{character.name}}
+            </mat-option>
+          </mat-select>
+          <button class="mat-raised-button" (click)="openPersonCard(characterId)">Персонаж</button>
+        </div>
+      </div>
+
+      <div class="form-group" [style.display]="hideFormGroup || !starships.length ? 'none' : 'grid'">
+        <label for="starships">Звездолеты</label>
+        <div class="form-group__select-and-button">
+          <mat-select id="starships" [(value)]="starshipId">
+            <mat-option *ngFor="let starship of starships" [value]="starship.id">
+              {{starship.name}}
+            </mat-option>
+          </mat-select>
+          <button class="mat-raised-button" (click)="openStarshipCard(starshipId)">Звездолет</button>
+        </div>
+      </div>
+
+      <div class="form-group" [style.display]="hideFormGroup || !planets.length ? 'none' : 'grid'">
+        <label for="planets">Планеты</label>
+        <div class="form-group__select-and-button">
+          <mat-select id="planets" [(value)]="planetId">
+            <mat-option *ngFor="let planet of planets" [value]="planet.id">
+              {{planet.name}}
+            </mat-option>
+          </mat-select>
+          <button class="mat-raised-button" (click)="openPlanetCard(planetId)">Планета</button>
+        </div>
+      </div>
+
+      <div class="form-group" [style.display]="hideFormGroup || !species.length ? 'none' : 'grid'">
+        <label for="species">Расы</label>
+        <div class="form-group__select-and-button">
+          <mat-select id="species" [(value)]="speciesId">
+            <mat-option *ngFor="let s of species" [value]="s.id">
+              {{s.name}}
+            </mat-option>
+          </mat-select>
+          <button class="mat-raised-button" (click)="openSpeciesCard(speciesId)">Раса</button>
+        </div>
+      </div>
+
+      <div [formGroup]="form">
+        <app-star-rating formControlName="rating"></app-star-rating>
+      </div>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button class="mat-raised-button" (click)="close()">Закрыть</button>
+  </mat-dialog-actions>
+
+</div>

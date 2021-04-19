@@ -1,0 +1,9 @@
+<ul class="star-rating" [ngClass]="{ 'is-disabled': isDisabled }">
+  <li
+    *ngFor="let i of [0,1,2,3,4]"
+    (click)="setRating(i + 1)"
+    [ngClass]="{ 'star-rating--highlight': currentRating > i , 'is-disabled': isDisabled }"
+  >
+    ☆
+  </li>
+</ul>

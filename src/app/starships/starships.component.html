@@ -1,0 +1,35 @@
+<div class="main">
+  <div class="header">
+    Информация о звездолетах
+  </div>
+
+  <app-search [search$]="search$"></app-search>
+
+  <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> НАЗВАНИЕ </mat-header-cell>
+      <mat-cell *matCellDef="let data" [attr.name]="'НАЗВАНИЕ'"> {{data.name}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="model">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> МОДЕЛЬ </mat-header-cell>
+      <mat-cell *matCellDef="let data" [attr.name]="'МОДЕЛЬ'"> {{data.model}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="starshipClass">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> КЛАСС </mat-header-cell>
+      <mat-cell *matCellDef="let data" [attr.name]="'КЛАСС'"> {{data.starshipClass}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="maxAtmospheringSpeed">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> МАКСИМАЛЬНАЯ СКОРОСТЬ </mat-header-cell>
+      <mat-cell *matCellDef="let data" [attr.name]="'МАКСИМАЛЬНАЯ СКОРОСТЬ'"> {{data.maxAtmospheringSpeed}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" (dblclick)="openDialog(row)"></mat-row>
+  </mat-table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons (page)="onPaginateChange($event)"></mat-paginator>
+</div>
+

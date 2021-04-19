@@ -1,0 +1,46 @@
+<div class="content">
+  <meta charset="utf-8">
+
+  <div class="card-header">
+    <h1 mat-dialog-title>Карточка звездолета</h1>
+  </div>
+
+  <mat-dialog-content>
+    <form>
+      <app-card [fields]="fields" [data]="data"></app-card>
+
+      <div class="form-group" [style.display]="hideFormGroup || !pilots.length ? 'none' : 'grid'">
+        <label for="pilots">Пилоты</label>
+        <div class="form-group__select-and-button">
+          <mat-select id="pilots" [(value)]="pilotId">
+            <mat-option *ngFor="let pilot of pilots" [value]="pilot.id">
+              {{pilot.name}}
+            </mat-option>
+          </mat-select>
+          <button class="mat-raised-button" (click)="openPersonCard(pilotId)">Персонаж</button>
+        </div>
+      </div>
+
+      <div class="form-group" [style.display]="hideFormGroup || !films.length ? 'none' : 'grid'">
+        <label for="films">Фильмы</label>
+        <div class="form-group__select-and-button">
+          <mat-select id="films" [(value)]="filmId">
+            <mat-option *ngFor="let film of films" [value]="film.id">
+              {{film.title}}
+            </mat-option>
+          </mat-select>
+          <button class="mat-raised-button" (click)="openFilmCard(filmId)">Фильм</button>
+        </div>
+      </div>
+
+      <div [formGroup]="form">
+        <app-star-rating formControlName="rating"></app-star-rating>
+      </div>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button class="mat-raised-button" (click)="close()">Закрыть</button>
+  </mat-dialog-actions>
+
+</div>

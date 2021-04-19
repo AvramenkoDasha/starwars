@@ -1,0 +1,34 @@
+<div class="main">
+  <div class="header">
+    Информация о расах
+  </div>
+
+  <app-search [search$]="search$"></app-search>
+
+  <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> НАЗВАНИЕ </mat-header-cell>
+      <mat-cell *matCellDef="let data" [attr.name]="'НАЗВАНИЕ'"> {{data.name}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="averageHeight">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> СРЕДНИЙ РОСТ </mat-header-cell>
+      <mat-cell *matCellDef="let data" [attr.name]="'СРЕДНИЙ РОСТ'"> {{data.averageHeight}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="averageLifespan">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> СРЕДНЯЯ ПРОДОЛЖИТЕЛЬНОСТЬ ЖИЗНИ </mat-header-cell>
+      <mat-cell *matCellDef="let data" [attr.name]="'СРЕДНЯЯ ПРОДОЛЖИТЕЛЬНОСТЬ ЖИЗНИ'"> {{data.averageLifespan}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="language">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> ЯЗЫК </mat-header-cell>
+      <mat-cell *matCellDef="let data" [attr.name]="'ЯЗЫК'"> {{data.language}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" (dblclick)="openDialog(row)"></mat-row>
+  </mat-table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons (page)="onPaginateChange($event)"></mat-paginator>
+</div>

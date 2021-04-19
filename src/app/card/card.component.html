@@ -1,0 +1,7 @@
+<ng-container *ngFor="let field of fields;">
+  <div class="form-group">
+    <label [htmlFor]="field.name">{{field.label}}</label>
+    <input disabled="disabled" type="text" class="form-control" [id]="field.name"
+           [(ngModel)]="data[field.name]" [name]="field.name">
+  </div>
+</ng-container>

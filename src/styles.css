@@ -1,0 +1,142 @@
+html, body {
+  height: auto;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.main {
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.header,
+.card-header {
+  font-size: 32px;
+  font-weight: 500;
+  color: #00008B;
+  margin: 12px 24px 24px 0;
+}
+
+.card-header {
+  margin-top: 0;
+}
+
+mat-table {
+  height: 680px;
+  overflow: auto;
+}
+
+mat-cell:first-of-type, mat-header-cell:first-of-type, mat-footer-cell:first-of-type {
+  padding-left: 10px !important;
+}
+
+@media (max-width: 1024px) {
+  mat-cell::before {
+    content: attr(name);
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    padding-bottom: 5px;
+  }
+
+  mat-header-row {
+    display: none !important;
+  }
+
+  mat-cell {
+    display: block !important;
+  }
+
+  mat-row {
+    display: grid !important;
+  }
+}
+
+mat-row {
+  cursor: pointer;
+}
+
+mat-row:hover {
+  background: #f5f5fa;
+}
+
+mat-cell, mat-header-cell {
+  padding: 10px;
+}
+
+.mat-header-cell {
+  font-size: 16px;
+  color: black !important;
+}
+
+mat-row::after, mat-header-row::after, mat-footer-row::after {
+  display: none !important;
+}
+
+.mat-sort-header-sorted .mat-sort-header-arrow {
+  opacity: 1 !important;
+  transform: translateY(0px) !important;
+}
+
+.mat-column-select {
+  max-width: fit-content;
+}
+
+.form-group {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  align-items: center;
+}
+
+.form-group > label {
+  font-size: 16px;
+  width: 200px;
+}
+
+.form-group > input,
+.form-group__select-and-button > mat-select {
+  border-radius: 5px;
+  border: 1px solid #cecdcd;
+  font-size: 16px;
+  padding: 8px 8px 8px 16px;
+}
+
+.mat-dialog-actions {
+  display: grid !important;
+}
+
+input {
+  margin-bottom: 10px;
+  margin-top: 10px;
+  padding: 5px;
+}
+
+.form-group__select-and-button > mat-select {
+  margin-right: 10px;
+  width: auto;
+}
+
+.form-group__select-and-button {
+  display: grid;
+  grid-template-columns: 1fr 120px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.form-group__select-and-button > .mat-raised-button {
+  height: 40px;
+}
+
+.mat-raised-button {
+  border: 1px solid #00008B !important;
+  box-shadow: none !important;
+}
+
+.mat-dialog-content {
+  display: grid !important;
+  margin: 0 !important;
+  padding: 0!important;
+}

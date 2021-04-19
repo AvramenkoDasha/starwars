@@ -1,0 +1,5 @@
+<mat-toolbar>
+  <mat-toolbar-row>
+    <a mat-button *ngFor="let link of links" [routerLink]="[link.router]">{{link.name}}</a>
+  </mat-toolbar-row>
+</mat-toolbar>

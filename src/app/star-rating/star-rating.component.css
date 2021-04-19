@@ -1,0 +1,28 @@
+ul.star-rating {
+  color: black;
+  padding: 0;
+  margin: 0;
+}
+
+ul.star-rating:not(.is-disabled):hover,
+.star-rating--highlight {
+  color: #8080C5;
+}
+
+ul.star-rating:not(.is-disabled) li:hover ~ li {
+  color: black;
+}
+
+li {
+  font-size: 40px;
+  cursor: pointer;
+  display: inline;
+}
+
+li.is-disabled {
+  cursor: default;
+}
+
+ul.star-rating.is-disabled {
+  opacity: 50%;
+}

@@ -1,0 +1,34 @@
+<div class="main">
+  <div class="header">
+    Информация о планетах
+  </div>
+
+  <app-search [search$]="search$"></app-search>
+
+  <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> НАЗВАНИЕ </mat-header-cell>
+      <mat-cell *matCellDef="let data" [attr.name]="'НАЗВАНИЕ'"> {{data.name}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="population">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> НАСЕЛЕНИЕ </mat-header-cell>
+      <mat-cell *matCellDef="let data" [attr.name]="'НАСЕЛЕНИЕ'"> {{data.population}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="climates">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> КЛИМАТ </mat-header-cell>
+      <mat-cell *matCellDef="let data" [attr.name]="'КЛИМАТ'"> {{data.climates}} </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="terrains">
+      <mat-header-cell *matHeaderCellDef mat-sort-header> МЕСТНОСТЬ </mat-header-cell>
+      <mat-cell *matCellDef="let data" [attr.name]="'МЕСТНОСТЬ'"> {{data.terrains}} </mat-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;" (dblclick)="openDialog(row)"></mat-row>
+  </mat-table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons (page)="onPaginateChange($event)"></mat-paginator>
+</div>
