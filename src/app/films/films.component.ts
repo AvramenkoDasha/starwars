@@ -1,5 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
-import {MatSort} from '@angular/material/sort';
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
 import {Subject} from 'rxjs';
 import {debounceTime} from 'rxjs/operators';
@@ -11,11 +10,21 @@ import {FilmService} from '../services/film.service';
 @Component({
   selector: 'app-films',
   templateUrl: './films.component.html',
-  styleUrls: ['./films.component.css']
+  styleUrls: ['./films.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilmsComponent implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = ['title', 'openingCrawl', 'releaseDate'];
+  columns = [{
+    name: 'title',
+    label: 'НАЗВАНИЕ'
+  }, {
+    name: 'openingCrawl',
+    label: 'ВСТУПИТЕЛЬНЫЕ ТИТРЫ'
+  }, {
+    name: 'releaseDate',
+    label: 'ДАТА ВЫХОДА'
+  }];
   dataSource = new MatTableDataSource<any>();
   search$ = new Subject<string>();
   pageIndex;
@@ -24,16 +33,15 @@ export class FilmsComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  @ViewChild(MatSort) sort: MatSort;
-
   constructor(private service: FilmService, public dialog: MatDialog, private cd: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.service.getFilms().subscribe(films => {
       this.dataSource.data = films;
       this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
     });
+
+    this.sortedHeader = JSON.parse(sessionStorage.getItem('filmsSort'));
 
     this.search$
       .pipe(
@@ -81,12 +89,6 @@ export class FilmsComponent implements OnInit, AfterViewInit {
     this.paginator.pageIndex = this.pageIndex;
     this.dataSource.filter = sessionStorage.getItem('filmsSearch');
     this.search$.next(sessionStorage.getItem('filmsSearch'));
-    this.sortedHeader = JSON.parse(sessionStorage.getItem('filmsSort'));
-    if (this.sortedHeader) {
-      this.sort.active = this.sortedHeader.active;
-      this.sort.direction = this.sortedHeader.direction;
-      this.sort.sortChange.emit(this.sortedHeader);
-    }
     this.cd.detectChanges();
   }
 }

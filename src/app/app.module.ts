@@ -31,6 +31,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { MatSelectModule } from '@angular/material/select';
 import { StarRatingComponent } from './star-rating/star-rating.component';
 import { CardComponent } from './card/card.component';
+import { TableComponent } from './table/table.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { CardComponent } from './card/card.component';
     PlanetCardComponent,
     SpeciesCardComponent,
     StarRatingComponent,
-    CardComponent
+    CardComponent,
+    TableComponent
   ],
   imports: [
     BrowserModule,

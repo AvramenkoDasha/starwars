@@ -1,4 +1,4 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {PersonCardComponent} from '../../people/person-card/person-card.component';
 import {FilmCardComponent} from '../../films/film-card/film-card.component';
@@ -7,7 +7,8 @@ import {PlanetService} from '../../services/planet.service';
 @Component({
   selector: 'app-planet-card',
   templateUrl: './planet-card.component.html',
-  styleUrls: ['./planet-card.component.css']
+  styleUrls: ['./planet-card.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PlanetCardComponent implements OnInit {
 

@@ -5,35 +5,13 @@
 
   <app-search [search$]="search$"></app-search>
 
-  <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
-    <ng-container matColumnDef="name">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> ИМЯ </mat-header-cell>
-      <mat-cell *matCellDef="let data" [attr.name]="'ИМЯ'"> {{data.name}} </mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="birthYear">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> ГОД РОЖДЕНИЯ </mat-header-cell>
-      <mat-cell *matCellDef="let data" [attr.name]="'ГОД РОЖДЕНИЯ'"> {{data.birthYear}} </mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="eyeColor">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> ЦВЕТ ГЛАЗ </mat-header-cell>
-      <mat-cell *matCellDef="let data" [attr.name]="'ЦВЕТ ГЛАЗ'"> {{data.eyeColor}} </mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="hairColor">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> ЦВЕТ ВОЛОС </mat-header-cell>
-      <mat-cell *matCellDef="let data" [attr.name]="'ЦВЕТ ВОЛОС'"> {{data.hairColor}} </mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="skinColor">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> ЦВЕТ КОЖИ </mat-header-cell>
-      <mat-cell *matCellDef="let data" [attr.name]="'ЦВЕТ КОЖИ'"> {{data.skinColor}} </mat-cell>
-    </ng-container>
-
-    <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" (dblclick)="openDialog(row)"></mat-row>
-  </mat-table>
+  <app-table
+    [dataSource]="dataSource"
+    [columns]="columns"
+    [sortedHeader]="sortedHeader"
+    (onDblClick)="openDialog($event)"
+    (sortData)="sortData($event)"
+  ></app-table>
 
   <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons (page)="onPaginateChange($event)"></mat-paginator>
 </div>

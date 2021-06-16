@@ -1,0 +1,11 @@
+<mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData.emit($event)">
+  <ng-container *ngFor="let column of columns;">
+    <ng-container matColumnDef="{{column.name}}">
+      <mat-header-cell *matHeaderCellDef mat-sort-header>{{column.label}}</mat-header-cell>
+      <mat-cell *matCellDef="let data" [attr.name]="column.label">{{data[column.name]}}</mat-cell>
+    </ng-container>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;" (dblclick)="onDblClick.emit(row)"></mat-row>
+</mat-table>

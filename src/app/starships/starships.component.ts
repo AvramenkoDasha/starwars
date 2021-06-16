@@ -1,8 +1,7 @@
-import {AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
 import {Subject} from 'rxjs';
 import {MatPaginator} from '@angular/material/paginator';
-import {MatSort} from '@angular/material/sort';
 import {debounceTime} from 'rxjs/operators';
 import {MatDialog} from '@angular/material/dialog';
 import {StarshipCardComponent} from './starship-card/starship-card.component';
@@ -11,11 +10,24 @@ import {StarshipService} from '../services/starship.service';
 @Component({
   selector: 'app-starships',
   templateUrl: './starships.component.html',
-  styleUrls: ['./starships.component.css']
+  styleUrls: ['./starships.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StarshipsComponent implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = ['name', 'model', 'starshipClass', 'maxAtmospheringSpeed'];
+  columns = [{
+    name: 'name',
+    label: 'НАЗВАНИЕ'
+  }, {
+    name: 'model',
+    label: 'МОДЕЛЬ'
+  }, {
+    name: 'starshipClass',
+    label: 'КЛАСС'
+  }, {
+    name: 'maxAtmospheringSpeed',
+    label: 'МАКСИМАЛЬНАЯ СКОРОСТЬ'
+  }];
   dataSource = new MatTableDataSource<any>();
   search$ = new Subject<string>();
   pageIndex;
@@ -24,16 +36,15 @@ export class StarshipsComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  @ViewChild(MatSort) sort: MatSort;
-
   constructor(private service: StarshipService, public dialog: MatDialog, private cd: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.service.getStarships().subscribe(starships => {
       this.dataSource.data = starships;
       this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
     });
+
+    this.sortedHeader = JSON.parse(sessionStorage.getItem('starshipsSort'));
 
     this.search$
       .pipe(
@@ -81,12 +92,6 @@ export class StarshipsComponent implements OnInit, AfterViewInit {
     this.paginator.pageIndex = this.pageIndex;
     this.dataSource.filter = sessionStorage.getItem('starshipsSearch');
     this.search$.next(sessionStorage.getItem('starshipsSearch'));
-    this.sortedHeader = JSON.parse(sessionStorage.getItem('starshipsSort'));
-    if (this.sortedHeader) {
-      this.sort.active = this.sortedHeader.active;
-      this.sort.direction = this.sortedHeader.direction;
-      this.sort.sortChange.emit(this.sortedHeader);
-    }
     this.cd.detectChanges();
   }
 }

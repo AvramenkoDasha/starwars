@@ -1,9 +1,8 @@
-import {AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
 import {Subject} from 'rxjs';
 import {MatPaginator} from '@angular/material/paginator';
-import {MatSort} from '@angular/material/sort';
-import {debounceTime, map} from 'rxjs/operators';
+import {debounceTime} from 'rxjs/operators';
 import {SpeciesCardComponent} from './species-card/species-card.component';
 import {MatDialog} from '@angular/material/dialog';
 import {SpeciesService} from '../services/species.service';
@@ -11,11 +10,24 @@ import {SpeciesService} from '../services/species.service';
 @Component({
   selector: 'app-species',
   templateUrl: './species.component.html',
-  styleUrls: ['./species.component.css']
+  styleUrls: ['./species.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SpeciesComponent implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = ['name', 'averageHeight', 'averageLifespan', 'language'];
+  columns = [{
+    name: 'name',
+    label: 'НАЗВАНИЕ'
+  }, {
+    name: 'averageHeight',
+    label: 'СРЕДНИЙ РОСТ'
+  }, {
+    name: 'averageLifespan',
+    label: 'СРЕДНЯЯ ПРОДОЛЖИТЕЛЬНОСТЬ ЖИЗНИ'
+  }, {
+    name: 'language',
+    label: 'ЯЗЫК'
+  }];
   dataSource = new MatTableDataSource<any>();
   search$ = new Subject<string>();
   pageIndex;
@@ -24,16 +36,15 @@ export class SpeciesComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  @ViewChild(MatSort) sort: MatSort;
-
   constructor(private service: SpeciesService, public dialog: MatDialog, private cd: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.service.getSpecies().subscribe(species => {
       this.dataSource.data = species;
       this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
     });
+
+    this.sortedHeader = JSON.parse(sessionStorage.getItem('speciesSort'));
 
     this.search$
       .pipe(
@@ -81,12 +92,6 @@ export class SpeciesComponent implements OnInit, AfterViewInit {
     this.paginator.pageIndex = this.pageIndex;
     this.dataSource.filter = sessionStorage.getItem('speciesSearch');
     this.search$.next(sessionStorage.getItem('speciesSearch'));
-    this.sortedHeader = JSON.parse(sessionStorage.getItem('speciesSort'));
-    if (this.sortedHeader) {
-      this.sort.active = this.sortedHeader.active;
-      this.sort.direction = this.sortedHeader.direction;
-      this.sort.sortChange.emit(this.sortedHeader);
-    }
     this.cd.detectChanges();
   }
 }

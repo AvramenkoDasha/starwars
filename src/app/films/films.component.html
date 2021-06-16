@@ -5,25 +5,13 @@
 
   <app-search [search$]="search$"></app-search>
 
-  <mat-table [dataSource]="dataSource" matSort (matSortChange)="sortData($event)">
-    <ng-container matColumnDef="title">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> НАЗВАНИЕ </mat-header-cell>
-      <mat-cell *matCellDef="let data" [attr.name]="'НАЗВАНИЕ'"> {{data.title}} </mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="openingCrawl">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> ВСТУПИТЕЛЬНЫЕ ТИТРЫ </mat-header-cell>
-      <mat-cell *matCellDef="let data" [attr.name]="'ВСТУПИТЕЛЬНЫЕ ТИТРЫ'"> {{data.openingCrawl}} </mat-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="releaseDate">
-      <mat-header-cell *matHeaderCellDef mat-sort-header> ДАТА ВЫХОДА </mat-header-cell>
-      <mat-cell *matCellDef="let data" [attr.name]="'ДАТА ВЫХОДА'"> {{data.releaseDate | date : 'dd.MM.yyyy'}} </mat-cell>
-    </ng-container>
-
-    <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;" (dblclick)="openDialog(row)"></mat-row>
-  </mat-table>
+  <app-table
+    [dataSource]="dataSource"
+    [columns]="columns"
+    [sortedHeader]="sortedHeader"
+    (onDblClick)="openDialog($event)"
+    (sortData)="sortData($event)"
+  ></app-table>
 
   <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons (page)="onPaginateChange($event)"></mat-paginator>
 </div>

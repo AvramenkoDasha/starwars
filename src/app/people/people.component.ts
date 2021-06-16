@@ -1,8 +1,7 @@
-import {AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
 import {Subject} from 'rxjs';
 import {MatPaginator} from '@angular/material/paginator';
-import {MatSort} from '@angular/material/sort';
 import {debounceTime} from 'rxjs/operators';
 import {PersonCardComponent} from './person-card/person-card.component';
 import {MatDialog} from '@angular/material/dialog';
@@ -11,11 +10,27 @@ import {PeopleService} from '../services/people.service';
 @Component({
   selector: 'app-people',
   templateUrl: './people.component.html',
-  styleUrls: ['./people.component.css']
+  styleUrls: ['./people.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PeopleComponent implements OnInit, AfterViewInit {
 
-  displayedColumns: string[] = ['name', 'birthYear', 'eyeColor', 'hairColor', 'skinColor'];
+  columns = [{
+    name: 'name',
+    label: 'ИМЯ'
+  }, {
+    name: 'birthYear',
+    label: 'ГОД РОЖДЕНИЯ'
+  }, {
+    name: 'eyeColor',
+    label: 'ЦВЕТ ГЛАЗ'
+  }, {
+    name: 'hairColor',
+    label: 'ЦВЕТ ВОЛОС'
+  }, {
+    name: 'skinColor',
+    label: 'ЦВЕТ КОЖИ'
+  }];
   dataSource = new MatTableDataSource<any>();
   search$ = new Subject<string>();
   pageIndex;
@@ -24,16 +39,15 @@ export class PeopleComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  @ViewChild(MatSort) sort: MatSort;
-
   constructor(private service: PeopleService, public dialog: MatDialog, private cd: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.service.getPeople().subscribe(people => {
       this.dataSource.data = people;
       this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
     });
+
+    this.sortedHeader = JSON.parse(sessionStorage.getItem('peopleSort'));
 
     this.search$
       .pipe(
@@ -81,12 +95,6 @@ export class PeopleComponent implements OnInit, AfterViewInit {
     this.paginator.pageIndex = this.pageIndex;
     this.dataSource.filter = sessionStorage.getItem('peopleSearch');
     this.search$.next(sessionStorage.getItem('peopleSearch'));
-    this.sortedHeader = JSON.parse(sessionStorage.getItem('peopleSort'));
-    if (this.sortedHeader) {
-      this.sort.active = this.sortedHeader.active;
-      this.sort.direction = this.sortedHeader.direction;
-      this.sort.sortChange.emit(this.sortedHeader);
-    }
     this.cd.detectChanges();
   }
 }
