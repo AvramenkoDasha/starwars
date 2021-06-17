@@ -36,10 +36,10 @@ export class StarshipsComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private service: StarshipService, public dialog: MatDialog, private cd: ChangeDetectorRef) { }
+  constructor(private starshipService: StarshipService, public dialog: MatDialog, private cd: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.service.getStarships().subscribe(starships => {
+    this.starshipService.getStarships().subscribe(starships => {
       this.dataSource.data = starships;
       this.dataSource.paginator = this.paginator;
     });
@@ -68,10 +68,13 @@ export class StarshipsComponent implements OnInit, AfterViewInit {
   }
 
   openDialog(row: any) {
-    this.dialog.open(StarshipCardComponent, {
-      data: {
-        id: row.id
-      }
+    this.starshipService.getStarship(row.id).subscribe(starship => {
+      this.dialog.open(StarshipCardComponent, {
+        data: {
+          starship: starship
+        },
+        disableClose: true
+      });
     });
   }
 

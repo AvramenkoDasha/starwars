@@ -2,7 +2,8 @@ import {ChangeDetectionStrategy, Component, Inject, OnInit} from '@angular/core'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {FilmCardComponent} from '../../films/film-card/film-card.component';
 import {StarshipCardComponent} from '../../starships/starship-card/starship-card.component';
-import {PeopleService} from '../../services/people.service';
+import {FilmService} from "../../services/film.service";
+import {StarshipService} from "../../services/starship.service";
 
 @Component({
   selector: 'app-person-card',
@@ -45,19 +46,17 @@ export class PersonCardComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<PersonCardComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any,
-              private service: PeopleService, public dialog: MatDialog) { }
+              private filmService: FilmService,
+              private starshipService: StarshipService,
+              public dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.hideFormGroup = this.data.hide;
-    this.service.getPerson(this.data.id).subscribe(person => {
-      this.data = person;
+    this.films = this.data.person.filmConnection.films;
+    this.filmId = this.films.length ? this.films[0].id : '';
 
-      this.films = this.data.filmConnection.films;
-      this.filmId = this.films.length ? this.films[0].id : '';
-
-      this.starships = this.data.starshipConnection.starships;
-      this.starshipId = this.starships.length ? this.starships[0].id : '';
-    });
+    this.starships = this.data.person.starshipConnection.starships;
+    this.starshipId = this.starships.length ? this.starships[0].id : '';
   }
 
   close() {
@@ -65,20 +64,26 @@ export class PersonCardComponent implements OnInit {
   }
 
   openFilmCard(id) {
-    this.dialog.open(FilmCardComponent, {
-      data: {
-        id,
-        hide: true
-      }
+    this.filmService.getFilm(id).subscribe(film => {
+      this.dialog.open(FilmCardComponent, {
+        data: {
+          film: film,
+          hide: true
+        },
+        disableClose: true
+      });
     });
   }
 
   openStarshipCard(id) {
-    this.dialog.open(StarshipCardComponent, {
-      data: {
-        id,
-        hide: true
-      }
+    this.starshipService.getStarship(id).subscribe(starship => {
+      this.dialog.open(StarshipCardComponent, {
+        data: {
+          starship: starship,
+          hide: true
+        },
+        disableClose: true
+      });
     });
   }
 }

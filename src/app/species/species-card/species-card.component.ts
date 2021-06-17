@@ -2,7 +2,8 @@ import {ChangeDetectionStrategy, Component, Inject, OnInit} from '@angular/core'
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {PersonCardComponent} from '../../people/person-card/person-card.component';
 import {FilmCardComponent} from '../../films/film-card/film-card.component';
-import {SpeciesService} from '../../services/species.service';
+import {PeopleService} from "../../services/people.service";
+import {FilmService} from "../../services/film.service";
 
 @Component({
   selector: 'app-species-card',
@@ -41,19 +42,18 @@ export class SpeciesCardComponent implements OnInit {
   hideFormGroup;
 
   constructor(public dialogRef: MatDialogRef<SpeciesCardComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: any, private service: SpeciesService, public dialog: MatDialog) { }
+              @Inject(MAT_DIALOG_DATA) public data: any,
+              private peopleService: PeopleService,
+              private filmService: FilmService,
+              public dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.hideFormGroup = this.data.hide;
-    this.service.getKind(this.data.id).subscribe(species => {
-      this.data = species;
+    this.people = this.data.species.personConnection.people;
+    this.personId = this.people.length ? this.people[0].id : '';
 
-      this.people = this.data.personConnection.people;
-      this.personId = this.people.length ? this.people[0].id : '';
-
-      this.films = this.data.filmConnection.films;
-      this.filmId = this.films.length ? this.films[0].id : '';
-    });
+    this.films = this.data.species.filmConnection.films;
+    this.filmId = this.films.length ? this.films[0].id : '';
   }
 
   close() {
@@ -61,20 +61,26 @@ export class SpeciesCardComponent implements OnInit {
   }
 
   openPersonCard(id) {
-    this.dialog.open(PersonCardComponent, {
-      data: {
-        id,
-        hide: true
-      }
+    this.peopleService.getPerson(id).subscribe(person => {
+      this.dialog.open(PersonCardComponent, {
+        data: {
+          person: person,
+          hide: true
+        },
+        disableClose: true
+      });
     });
   }
 
   openFilmCard(id) {
-    this.dialog.open(FilmCardComponent, {
-      data: {
-        id,
-        hide: true
-      }
+    this.filmService.getFilm(id).subscribe(film => {
+      this.dialog.open(FilmCardComponent, {
+        data: {
+          film: film,
+          hide: true
+        },
+        disableClose: true
+      });
     });
   }
 }

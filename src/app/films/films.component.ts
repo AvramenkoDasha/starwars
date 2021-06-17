@@ -33,10 +33,10 @@ export class FilmsComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private service: FilmService, public dialog: MatDialog, private cd: ChangeDetectorRef) { }
+  constructor(private filmService: FilmService, public dialog: MatDialog, private cd: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.service.getFilms().subscribe(films => {
+    this.filmService.getFilms().subscribe(films => {
       this.dataSource.data = films;
       this.dataSource.paginator = this.paginator;
     });
@@ -65,10 +65,13 @@ export class FilmsComponent implements OnInit, AfterViewInit {
   }
 
   openDialog(row: any) {
-    this.dialog.open(FilmCardComponent, {
-      data: {
-        id: row.id
-      }
+    this.filmService.getFilm(row.id).subscribe(film => {
+      this.dialog.open(FilmCardComponent, {
+        data: {
+          film: film
+        },
+        disableClose: true
+      });
     });
   }
 

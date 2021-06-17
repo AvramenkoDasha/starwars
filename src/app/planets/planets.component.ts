@@ -36,10 +36,10 @@ export class PlanetsComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private service: PlanetService, public dialog: MatDialog, private cd: ChangeDetectorRef) { }
+  constructor(private planetService: PlanetService, public dialog: MatDialog, private cd: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.service.getPlanets().subscribe(planets => {
+    this.planetService.getPlanets().subscribe(planets => {
       this.dataSource.data = planets;
       this.dataSource.paginator = this.paginator;
     });
@@ -68,10 +68,13 @@ export class PlanetsComponent implements OnInit, AfterViewInit {
   }
 
   openDialog(row: any) {
-    this.dialog.open(PlanetCardComponent, {
-      data: {
-        id: row.id
-      }
+    this.planetService.getPlanet(row.id).subscribe(planet => {
+      this.dialog.open(PlanetCardComponent, {
+        data: {
+          planet: planet
+        },
+        disableClose: true
+      });
     });
   }
 

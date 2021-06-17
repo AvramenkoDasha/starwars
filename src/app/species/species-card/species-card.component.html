@@ -7,7 +7,7 @@
 
   <mat-dialog-content>
     <form>
-      <app-card [fields]="fields" [data]="data"></app-card>
+      <app-card [fields]="fields" [data]="data.species"></app-card>
 
       <div class="form-group" [style.display]="hideFormGroup || !people.length ? 'none' : 'grid'">
         <label for="people">Персонажи</label>

@@ -7,7 +7,7 @@
 
   <mat-dialog-content>
     <form>
-      <app-card [fields]="fields" [data]="data"></app-card>
+      <app-card [fields]="fields" [data]="data.planet"></app-card>
 
       <div class="form-group" [style.display]="hideFormGroup || !residents.length ? 'none' : 'grid'">
         <label for="residents">Жители</label>

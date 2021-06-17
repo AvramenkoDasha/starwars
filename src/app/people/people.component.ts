@@ -39,10 +39,10 @@ export class PeopleComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private service: PeopleService, public dialog: MatDialog, private cd: ChangeDetectorRef) { }
+  constructor(private peopleService: PeopleService, public dialog: MatDialog, private cd: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.service.getPeople().subscribe(people => {
+    this.peopleService.getPeople().subscribe(people => {
       this.dataSource.data = people;
       this.dataSource.paginator = this.paginator;
     });
@@ -71,10 +71,13 @@ export class PeopleComponent implements OnInit, AfterViewInit {
   }
 
   openDialog(row: any) {
-    this.dialog.open(PersonCardComponent, {
-      data: {
-        id: row.id
-      }
+    this.peopleService.getPerson(row.id).subscribe(person => {
+      this.dialog.open(PersonCardComponent, {
+        data: {
+          person: person
+        },
+        disableClose: true
+      });
     });
   }
 

@@ -36,10 +36,10 @@ export class SpeciesComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private service: SpeciesService, public dialog: MatDialog, private cd: ChangeDetectorRef) { }
+  constructor(private speciesService: SpeciesService, public dialog: MatDialog, private cd: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.service.getSpecies().subscribe(species => {
+    this.speciesService.getSpecies().subscribe(species => {
       this.dataSource.data = species;
       this.dataSource.paginator = this.paginator;
     });
@@ -68,10 +68,13 @@ export class SpeciesComponent implements OnInit, AfterViewInit {
   }
 
   openDialog(row: any) {
-    this.dialog.open(SpeciesCardComponent, {
-      data: {
-        id: row.id
-      }
+    this.speciesService.getKind(row.id).subscribe(species => {
+      this.dialog.open(SpeciesCardComponent, {
+        data: {
+          species: species
+        },
+        disableClose: true
+      });
     });
   }
 

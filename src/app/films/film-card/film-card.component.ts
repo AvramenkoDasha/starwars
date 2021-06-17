@@ -5,7 +5,10 @@ import {StarshipCardComponent} from '../../starships/starship-card/starship-card
 import {PlanetCardComponent} from '../../planets/planet-card/planet-card.component';
 import {SpeciesCardComponent} from '../../species/species-card/species-card.component';
 import {FormControl, FormGroup} from '@angular/forms';
-import {FilmService} from '../../services/film.service';
+import {PeopleService} from "../../services/people.service";
+import {StarshipService} from "../../services/starship.service";
+import {PlanetService} from "../../services/planet.service";
+import {SpeciesService} from "../../services/species.service";
 
 @Component({
   selector: 'app-film-card',
@@ -43,7 +46,12 @@ export class FilmCardComponent implements OnInit {
   public form: FormGroup;
 
   constructor(public dialogRef: MatDialogRef<FilmCardComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: any, private service: FilmService, public dialog: MatDialog) {
+              @Inject(MAT_DIALOG_DATA) public data: any,
+              private peopleService: PeopleService,
+              private starshipService: StarshipService,
+              private planetService: PlanetService,
+              private speciesService: SpeciesService,
+              public dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -51,35 +59,31 @@ export class FilmCardComponent implements OnInit {
     this.form = new FormGroup({
       rating: new FormControl(),
     });
-    this.service.getFilm(this.data.id).subscribe(film => {
-      this.data = film;
+    this.characters = this.data.film.characterConnection.characters;
+    this.characterId = this.characters.length ? this.characters[0].id : '';
 
-      this.characters = this.data.characterConnection.characters;
-      this.characterId = this.characters.length ? this.characters[0].id : '';
+    this.starships = this.data.film.starshipConnection.starships;
+    this.starshipId = this.starships.length ? this.starships[0].id : '';
 
-      this.starships = this.data.starshipConnection.starships;
-      this.starshipId = this.starships.length ? this.starships[0].id : '';
+    this.planets = this.data.film.planetConnection.planets;
+    this.planetId = this.planets.length ? this.planets[0].id : '';
 
-      this.planets = this.data.planetConnection.planets;
-      this.planetId = this.planets.length ? this.planets[0].id : '';
+    this.species = this.data.film.speciesConnection.species;
+    this.speciesId = this.species ? this.species[0].id : '';
 
-      this.species = this.data.speciesConnection.species;
-      this.speciesId = this.species ? this.species[0].id : '';
-
-      if (sessionStorage.getItem('filmsRating')) {
-        this.filmsRating = JSON.parse(sessionStorage.getItem('filmsRating'));
-      }
-      this.index = this.filmsRating ? this.filmsRating.findIndex(f => f.id === film.id) : -1;
-      this.form.get('rating').patchValue(this.index >= 0 ? this.filmsRating[this.index].rating : 0);
-      if (this.hideFormGroup) {
-        this.form.get('rating').disable(this.hideFormGroup);
-      }
-    });
+    if (sessionStorage.getItem('filmsRating')) {
+      this.filmsRating = JSON.parse(sessionStorage.getItem('filmsRating'));
+    }
+    this.index = this.filmsRating ? this.filmsRating.findIndex(f => f.id === this.data.film.id) : -1;
+    this.form.get('rating').patchValue(this.index >= 0 ? this.filmsRating[this.index].rating : 0);
+    if (this.hideFormGroup) {
+      this.form.get('rating').disable(this.hideFormGroup);
+    }
   }
 
   close() {
     this.rating = {
-      id: this.data.id,
+      id: this.data.film.id,
       rating: this.form.value.rating
     };
     if (this.index >= 0) {
@@ -92,38 +96,50 @@ export class FilmCardComponent implements OnInit {
   }
 
   openPersonCard(id) {
-    this.dialog.open(PersonCardComponent, {
-      data: {
-        id,
-        hide: true
-      }
+    this.peopleService.getPerson(id).subscribe(person => {
+      this.dialog.open(PersonCardComponent, {
+        data: {
+          person: person,
+          hide: true
+        },
+        disableClose: true
+      });
     });
   }
 
   openStarshipCard(id) {
-    this.dialog.open(StarshipCardComponent, {
-      data: {
-        id,
-        hide: true
-      }
+    this.starshipService.getStarship(id).subscribe(starship => {
+      this.dialog.open(StarshipCardComponent, {
+        data: {
+          starship: starship,
+          hide: true
+        },
+        disableClose: true
+      });
     });
   }
 
   openPlanetCard(id) {
-    this.dialog.open(PlanetCardComponent, {
-      data: {
-        id,
-        hide: true
-      }
+    this.planetService.getPlanet(id).subscribe(planet => {
+      this.dialog.open(PlanetCardComponent, {
+        data: {
+          planet: planet,
+          hide: true
+        },
+        disableClose: true
+      });
     });
   }
 
   openSpeciesCard(id) {
-    this.dialog.open(SpeciesCardComponent, {
-      data: {
-        id,
-        hide: true
-      }
+    this.speciesService.getKind(id).subscribe(species => {
+      this.dialog.open(SpeciesCardComponent, {
+        data: {
+          species: species,
+          hide: true
+        },
+        disableClose: true
+      });
     });
   }
 }

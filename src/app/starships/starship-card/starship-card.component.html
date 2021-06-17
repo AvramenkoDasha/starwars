@@ -7,7 +7,7 @@
 
   <mat-dialog-content>
     <form>
-      <app-card [fields]="fields" [data]="data"></app-card>
+      <app-card [fields]="fields" [data]="data.starship"></app-card>
 
       <div class="form-group" [style.display]="hideFormGroup || !pilots.length ? 'none' : 'grid'">
         <label for="pilots">Пилоты</label>

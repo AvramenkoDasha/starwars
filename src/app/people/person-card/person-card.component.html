@@ -7,7 +7,7 @@
 
   <mat-dialog-content>
     <form>
-      <app-card [fields]="fields" [data]="data"></app-card>
+      <app-card [fields]="fields" [data]="data.person"></app-card>
 
       <div class="form-group" [style.display]="hideFormGroup || !films.length ? 'none' : 'grid'">
         <label for="films">Фильмы</label>
