@@ -31,6 +31,23 @@ export class StarshipService {
       .valueChanges.pipe(map(result => result.data.allStarships.starships));
   }
 
+  getStarshipsForTeams(): Observable<any> {
+    return this.apollo
+      .watchQuery<any>({
+        query: gql`
+                    query getStarships {
+                        allStarships {
+                          starships {
+                            name
+                          }
+                        }
+                      }
+        `
+      })
+      .valueChanges.pipe(map(result => result.data.allStarships.starships));
+  }
+
+
   getStarship(id: any): Observable<any> {
     return this.apollo
       .watchQuery<any>({

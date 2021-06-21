@@ -32,6 +32,22 @@ export class PeopleService {
       .valueChanges.pipe(map(result => result.data.allPeople.people));
   }
 
+  getPeopleForTeams(): Observable<any> {
+    return this.apollo
+      .watchQuery<any>({
+        query: gql`
+                    query getPeople {
+                      allPeople {
+                        people {
+                          name
+                        }
+                      }
+                    }
+        `
+      })
+      .valueChanges.pipe(map(result => result.data.allPeople.people));
+  }
+
   getPerson(id: any): Observable<any> {
     return this.apollo
       .watchQuery<any>({

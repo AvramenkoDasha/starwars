@@ -32,6 +32,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { StarRatingComponent } from './star-rating/star-rating.component';
 import { CardComponent } from './card/card.component';
 import { TableComponent } from './table/table.component';
+import { TeamsComponent } from "./teams/teams.component";
+import { TeamCardComponent } from './teams/team-card/team-card.component';
+import { StarshipSelectComponent } from './starship-select/starship-select.component';
+import { ModalComponent } from './modal/modal.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +54,11 @@ import { TableComponent } from './table/table.component';
     SpeciesCardComponent,
     StarRatingComponent,
     CardComponent,
-    TableComponent
+    TableComponent,
+    TeamsComponent,
+    TeamCardComponent,
+    StarshipSelectComponent,
+    ModalComponent
   ],
   imports: [
     BrowserModule,

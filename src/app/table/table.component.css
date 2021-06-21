@@ -1,3 +1,7 @@
 .mat-column-openingCrawl {
   flex-basis: 55%;
 }
+
+.highlight{
+  background: #f5f5fa;
+}

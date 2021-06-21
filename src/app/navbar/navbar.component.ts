@@ -28,6 +28,10 @@ export class NavbarComponent implements OnInit {
     {
       name: 'Расы',
       router: 'species'
+    },
+    {
+      name: 'Команды',
+      router: 'teams'
     }
   ];
 

@@ -20,6 +20,12 @@ body {
   margin: 12px 24px 24px 0;
 }
 
+.modal-header {
+  font-size: 32px;
+  font-weight: 500;
+  color: #00008B;
+}
+
 .card-header {
   margin-top: 0;
 }
@@ -97,7 +103,8 @@ mat-row::after, mat-header-row::after, mat-footer-row::after {
 }
 
 .form-group > input,
-.form-group__select-and-button > mat-select {
+.form-group__select-and-button > mat-select,
+.form-group__select > mat-select {
   border-radius: 5px;
   border: 1px solid #cecdcd;
   font-size: 16px;
@@ -117,6 +124,15 @@ input {
 .form-group__select-and-button > mat-select {
   margin-right: 10px;
   width: auto;
+}
+
+.form-group__select {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.form-group__select > mat-select {
+  width: 94%;
 }
 
 .form-group__select-and-button {

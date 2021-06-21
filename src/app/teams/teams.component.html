@@ -1,0 +1,19 @@
+<div class="main">
+  <div class="header">
+    Информация о командах
+  </div>
+
+  <div class="buttons">
+    <button class="mat-raised-button add-button" (click)="addTeam()">Добавить</button>
+    <button class="mat-raised-button" (click)="deleteTeam()">Удалить</button>
+  </div>
+
+  <app-table
+    [dataSource]="dataSource"
+    [columns]="columns"
+    (onDblClick)="editTeam($event)"
+    (onClick)="onTeamClick($event)"
+  ></app-table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+</div>

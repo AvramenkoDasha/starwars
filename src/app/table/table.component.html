@@ -7,5 +7,9 @@
   </ng-container>
 
   <mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: displayedColumns;" (dblclick)="onDblClick.emit(row)"></mat-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;"
+           (dblclick)="onDblClick.emit(row)"
+           (click)="onClick.emit(row); selectRow(row)"
+           [ngClass]="{'highlight': selectedRowIndex == row.id}">
+  </mat-row>
 </mat-table>

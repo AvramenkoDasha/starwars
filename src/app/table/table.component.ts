@@ -21,11 +21,13 @@ export class TableComponent implements OnInit, AfterViewInit {
   @Input() sortedHeader;
 
   @Output() onDblClick = new EventEmitter();
+  @Output() onClick = new EventEmitter();
   @Output() sortData = new EventEmitter();
 
   @ViewChild(MatSort) sort: MatSort;
 
   displayedColumns;
+  selectedRowIndex = -1;
 
   constructor() { }
 
@@ -40,5 +42,9 @@ export class TableComponent implements OnInit, AfterViewInit {
       this.sort.direction = this.sortedHeader.direction;
       this.sort.sortChange.emit(this.sortedHeader);
     }
+  }
+
+  selectRow(row) {
+    this.selectedRowIndex = row.id;
   }
 }

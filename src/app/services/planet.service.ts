@@ -31,6 +31,22 @@ export class PlanetService {
       .valueChanges.pipe(map(result => result.data.allPlanets.planets));
   }
 
+  getPlanetsForTeams(): Observable<any> {
+    return this.apollo
+      .watchQuery<any>({
+        query: gql`
+                    query getPlanets {
+                        allPlanets {
+                          planets {
+                            name
+                          }
+                        }
+                      }
+        `
+      })
+      .valueChanges.pipe(map(result => result.data.allPlanets.planets));
+  }
+
   getPlanet(id: any): Observable<any> {
     return this.apollo
       .watchQuery<any>({
