@@ -111,6 +111,10 @@ mat-row::after, mat-header-row::after, mat-footer-row::after {
   padding: 8px 8px 8px 16px;
 }
 
+.invalid .form-group__select > mat-select {
+  border: 1px solid red;
+}
+
 .mat-dialog-actions {
   display: grid !important;
 }

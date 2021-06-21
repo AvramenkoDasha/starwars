@@ -47,4 +47,9 @@ export class TableComponent implements OnInit, AfterViewInit {
   selectRow(row) {
     this.selectedRowIndex = row.id;
   }
+
+  editRow(row) {
+    this.onClick.emit(row);
+    this.selectRow(row);
+  }
 }
