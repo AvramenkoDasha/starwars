@@ -1,6 +1,14 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
-import {Subject} from 'rxjs';
+import {Subject, Subscription} from 'rxjs';
 import {MatPaginator} from '@angular/material/paginator';
 import {debounceTime} from 'rxjs/operators';
 import {PersonCardComponent} from './person-card/person-card.component';
@@ -13,7 +21,7 @@ import {PeopleService} from '../services/people.service';
   styleUrls: ['./people.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PeopleComponent implements OnInit, AfterViewInit {
+export class PeopleComponent implements OnInit, AfterViewInit, OnDestroy {
 
   columns = [{
     name: 'name',
@@ -37,25 +45,27 @@ export class PeopleComponent implements OnInit, AfterViewInit {
   pageSize;
   sortedHeader;
 
+  public subscriptions: Subscription = new Subscription();
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(private peopleService: PeopleService, public dialog: MatDialog, private cd: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.peopleService.getPeople().subscribe(people => {
+    this.subscriptions.add(this.peopleService.getPeople().subscribe(people => {
       this.dataSource.data = people;
       this.dataSource.paginator = this.paginator;
-    });
+    }));
 
     this.sortedHeader = JSON.parse(sessionStorage.getItem('peopleSort'));
 
-    this.search$
+    this.subscriptions.add(this.search$
       .pipe(
         debounceTime(300)
       )
       .subscribe((value: string) => {
         this.applyFilter(value);
-      });
+      }));
   }
 
   applyFilter(filterValue: string) {
@@ -71,14 +81,14 @@ export class PeopleComponent implements OnInit, AfterViewInit {
   }
 
   openDialog(row: any) {
-    this.peopleService.getPerson(row.id).subscribe(person => {
+    this.subscriptions.add(this.peopleService.getPerson(row.id).subscribe(person => {
       this.dialog.open(PersonCardComponent, {
         data: {
           person: person
         },
         disableClose: true
       });
-    });
+    }));
   }
 
   onPaginateChange(event) {
@@ -99,5 +109,9 @@ export class PeopleComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = sessionStorage.getItem('peopleSearch');
     this.search$.next(sessionStorage.getItem('peopleSearch'));
     this.cd.detectChanges();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 }

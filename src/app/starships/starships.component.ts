@@ -1,6 +1,14 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
-import {Subject} from 'rxjs';
+import {Subject, Subscription} from 'rxjs';
 import {MatPaginator} from '@angular/material/paginator';
 import {debounceTime} from 'rxjs/operators';
 import {MatDialog} from '@angular/material/dialog';
@@ -13,7 +21,7 @@ import {StarshipService} from '../services/starship.service';
   styleUrls: ['./starships.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StarshipsComponent implements OnInit, AfterViewInit {
+export class StarshipsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   columns = [{
     name: 'name',
@@ -34,25 +42,27 @@ export class StarshipsComponent implements OnInit, AfterViewInit {
   pageSize;
   sortedHeader;
 
+  public subscriptions: Subscription = new Subscription();
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(private starshipService: StarshipService, public dialog: MatDialog, private cd: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.starshipService.getStarships().subscribe(starships => {
+    this.subscriptions.add(this.starshipService.getStarships().subscribe(starships => {
       this.dataSource.data = starships;
       this.dataSource.paginator = this.paginator;
-    });
+    }));
 
     this.sortedHeader = JSON.parse(sessionStorage.getItem('starshipsSort'));
 
-    this.search$
+    this.subscriptions.add(this.search$
       .pipe(
         debounceTime(300)
       )
       .subscribe((value: string) => {
         this.applyFilter(value);
-      });
+      }));
   }
 
   applyFilter(filterValue: string) {
@@ -68,14 +78,14 @@ export class StarshipsComponent implements OnInit, AfterViewInit {
   }
 
   openDialog(row: any) {
-    this.starshipService.getStarship(row.id).subscribe(starship => {
+    this.subscriptions.add(this.starshipService.getStarship(row.id).subscribe(starship => {
       this.dialog.open(StarshipCardComponent, {
         data: {
           starship: starship
         },
         disableClose: true
       });
-    });
+    }));
   }
 
   onPaginateChange(event) {
@@ -96,5 +106,9 @@ export class StarshipsComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = sessionStorage.getItem('starshipsSearch');
     this.search$.next(sessionStorage.getItem('starshipsSearch'));
     this.cd.detectChanges();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 }

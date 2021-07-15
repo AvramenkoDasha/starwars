@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {MatTableDataSource} from "@angular/material/table";
 import {MatPaginator} from "@angular/material/paginator";
 import {MatDialog} from "@angular/material/dialog";
@@ -7,6 +7,7 @@ import {PlanetService} from "../services/planet.service";
 import {PeopleService} from "../services/people.service";
 import {StarshipService} from "../services/starship.service";
 import {ModalComponent} from "../modal/modal.component";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-teams',
@@ -14,7 +15,7 @@ import {ModalComponent} from "../modal/modal.component";
   styleUrls: ['./teams.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TeamsComponent implements OnInit {
+export class TeamsComponent implements OnInit, OnDestroy {
 
   columns = [{
     name: 'name',
@@ -35,6 +36,8 @@ export class TeamsComponent implements OnInit {
   starships;
   selectedTeamId = -1;
 
+  public subscriptions: Subscription = new Subscription();
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(public dialog: MatDialog,
@@ -46,15 +49,15 @@ export class TeamsComponent implements OnInit {
     let teams = JSON.parse(sessionStorage.getItem('teams'));
     this.dataSource = new MatTableDataSource(teams ? teams : []);
     this.dataSource.paginator = this.paginator;
-    this.planetService.getPlanetsForTeams().subscribe(planets => {
+    this.subscriptions.add(this.planetService.getPlanetsForTeams().subscribe(planets => {
       this.planets = planets;
-    });
-    this.peopleService.getPeopleForTeams().subscribe(people => {
+    }));
+    this.subscriptions.add(this.peopleService.getPeopleForTeams().subscribe(people => {
       this.people = people;
-    });
-    this.starshipService.getStarshipsForTeams().subscribe(starships => {
+    }));
+    this.subscriptions.add(this.starshipService.getStarshipsForTeams().subscribe(starships => {
       this.starships = starships;
-    })
+    }));
   }
 
   addTeam() {
@@ -67,14 +70,14 @@ export class TeamsComponent implements OnInit {
       disableClose: true
     });
 
-    dialogRef.afterClosed().subscribe(res => {
+    this.subscriptions.add(dialogRef.afterClosed().subscribe(res => {
       if (res.isTeamAddedOrEdited) {
         res.data.id = this.dataSource.data.length ? this.dataSource.data.length + 1 : 1;
         this.dataSource.data.push(res.data);
         this.dataSource.data = this.dataSource.data.slice();
         sessionStorage.setItem('teams', JSON.stringify(this.dataSource.data));
       }
-    });
+    }));
   }
 
   editTeam(row) {
@@ -92,7 +95,7 @@ export class TeamsComponent implements OnInit {
       disableClose: true
     });
 
-    dialogRef.afterClosed().subscribe(res => {
+    this.subscriptions.add(dialogRef.afterClosed().subscribe(res => {
       if (res.isTeamAddedOrEdited) {
         let i = this.dataSource.data.findIndex(o => o.id === row.id);
         res.data.id = row.id;
@@ -100,7 +103,7 @@ export class TeamsComponent implements OnInit {
         this.dataSource.data = this.dataSource.data.slice();
         sessionStorage.setItem('teams', JSON.stringify(this.dataSource.data));
       }
-    });
+    }));
   }
 
   onTeamClick(row) {
@@ -121,5 +124,9 @@ export class TeamsComponent implements OnInit {
         disableClose: true
       })
     }
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 }

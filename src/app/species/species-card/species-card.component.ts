@@ -1,9 +1,10 @@
-import {ChangeDetectionStrategy, Component, Inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {PersonCardComponent} from '../../people/person-card/person-card.component';
 import {FilmCardComponent} from '../../films/film-card/film-card.component';
 import {PeopleService} from "../../services/people.service";
 import {FilmService} from "../../services/film.service";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-species-card',
@@ -11,7 +12,7 @@ import {FilmService} from "../../services/film.service";
   styleUrls: ['./species-card.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SpeciesCardComponent implements OnInit {
+export class SpeciesCardComponent implements OnInit, OnDestroy {
 
   fields = [{
     name: 'name',
@@ -41,6 +42,8 @@ export class SpeciesCardComponent implements OnInit {
   filmId;
   hideFormGroup;
 
+  public subscriptions: Subscription = new Subscription();
+
   constructor(public dialogRef: MatDialogRef<SpeciesCardComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any,
               private peopleService: PeopleService,
@@ -61,7 +64,7 @@ export class SpeciesCardComponent implements OnInit {
   }
 
   openPersonCard(id) {
-    this.peopleService.getPerson(id).subscribe(person => {
+    this.subscriptions.add(this.peopleService.getPerson(id).subscribe(person => {
       this.dialog.open(PersonCardComponent, {
         data: {
           person: person,
@@ -69,11 +72,11 @@ export class SpeciesCardComponent implements OnInit {
         },
         disableClose: true
       });
-    });
+    }));
   }
 
   openFilmCard(id) {
-    this.filmService.getFilm(id).subscribe(film => {
+    this.subscriptions.add(this.filmService.getFilm(id).subscribe(film => {
       this.dialog.open(FilmCardComponent, {
         data: {
           film: film,
@@ -81,6 +84,10 @@ export class SpeciesCardComponent implements OnInit {
         },
         disableClose: true
       });
-    });
+    }));
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 }

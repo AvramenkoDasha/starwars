@@ -1,9 +1,10 @@
-import {ChangeDetectionStrategy, Component, Inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {FilmCardComponent} from '../../films/film-card/film-card.component';
 import {StarshipCardComponent} from '../../starships/starship-card/starship-card.component';
 import {FilmService} from "../../services/film.service";
 import {StarshipService} from "../../services/starship.service";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-person-card',
@@ -11,7 +12,7 @@ import {StarshipService} from "../../services/starship.service";
   styleUrls: ['./person-card.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PersonCardComponent implements OnInit {
+export class PersonCardComponent implements OnInit, OnDestroy {
 
   fields = [{
     name: 'name',
@@ -44,6 +45,8 @@ export class PersonCardComponent implements OnInit {
   starshipId;
   hideFormGroup;
 
+  public subscriptions: Subscription = new Subscription();
+
   constructor(public dialogRef: MatDialogRef<PersonCardComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any,
               private filmService: FilmService,
@@ -64,7 +67,7 @@ export class PersonCardComponent implements OnInit {
   }
 
   openFilmCard(id) {
-    this.filmService.getFilm(id).subscribe(film => {
+    this.subscriptions.add(this.filmService.getFilm(id).subscribe(film => {
       this.dialog.open(FilmCardComponent, {
         data: {
           film: film,
@@ -72,11 +75,11 @@ export class PersonCardComponent implements OnInit {
         },
         disableClose: true
       });
-    });
+    }));
   }
 
   openStarshipCard(id) {
-    this.starshipService.getStarship(id).subscribe(starship => {
+    this.subscriptions.add(this.starshipService.getStarship(id).subscribe(starship => {
       this.dialog.open(StarshipCardComponent, {
         data: {
           starship: starship,
@@ -84,6 +87,10 @@ export class PersonCardComponent implements OnInit {
         },
         disableClose: true
       });
-    });
+    }));
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 }

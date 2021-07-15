@@ -1,6 +1,14 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
-import {Subject} from 'rxjs';
+import {Subject, Subscription} from 'rxjs';
 import {debounceTime} from 'rxjs/operators';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatDialog} from '@angular/material/dialog';
@@ -13,7 +21,7 @@ import {FilmService} from '../services/film.service';
   styleUrls: ['./films.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FilmsComponent implements OnInit, AfterViewInit {
+export class FilmsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   columns = [{
     name: 'title',
@@ -31,25 +39,27 @@ export class FilmsComponent implements OnInit, AfterViewInit {
   pageSize;
   sortedHeader;
 
+  public subscriptions: Subscription = new Subscription();
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(private filmService: FilmService, public dialog: MatDialog, private cd: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.filmService.getFilms().subscribe(films => {
+    this.subscriptions.add(this.filmService.getFilms().subscribe(films => {
       this.dataSource.data = films;
       this.dataSource.paginator = this.paginator;
-    });
+    }));
 
     this.sortedHeader = JSON.parse(sessionStorage.getItem('filmsSort'));
 
-    this.search$
+    this.subscriptions.add(this.search$
       .pipe(
         debounceTime(300)
       )
       .subscribe((value: string) => {
         this.applyFilter(value);
-      });
+      }));
   }
 
   applyFilter(filterValue: string) {
@@ -65,14 +75,14 @@ export class FilmsComponent implements OnInit, AfterViewInit {
   }
 
   openDialog(row: any) {
-    this.filmService.getFilm(row.id).subscribe(film => {
+    this.subscriptions.add(this.filmService.getFilm(row.id).subscribe(film => {
       this.dialog.open(FilmCardComponent, {
         data: {
           film: film
         },
         disableClose: true
       });
-    });
+    }));
   }
 
   onPaginateChange(event) {
@@ -93,5 +103,9 @@ export class FilmsComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = sessionStorage.getItem('filmsSearch');
     this.search$.next(sessionStorage.getItem('filmsSearch'));
     this.cd.detectChanges();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 }

@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Inject, OnDestroy, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from '@angular/material/dialog';
 import {PersonCardComponent} from '../../people/person-card/person-card.component';
 import {StarshipCardComponent} from '../../starships/starship-card/starship-card.component';
@@ -9,6 +9,7 @@ import {PeopleService} from "../../services/people.service";
 import {StarshipService} from "../../services/starship.service";
 import {PlanetService} from "../../services/planet.service";
 import {SpeciesService} from "../../services/species.service";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-film-card',
@@ -16,7 +17,7 @@ import {SpeciesService} from "../../services/species.service";
   styleUrls: ['./film-card.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FilmCardComponent implements OnInit {
+export class FilmCardComponent implements OnInit, OnDestroy {
 
   fields = [{
     name: 'title',
@@ -44,6 +45,8 @@ export class FilmCardComponent implements OnInit {
   rating;
   index;
   public form: FormGroup;
+
+  public subscriptions: Subscription = new Subscription();
 
   constructor(public dialogRef: MatDialogRef<FilmCardComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any,
@@ -96,7 +99,7 @@ export class FilmCardComponent implements OnInit {
   }
 
   openPersonCard(id) {
-    this.peopleService.getPerson(id).subscribe(person => {
+    this.subscriptions.add(this.peopleService.getPerson(id).subscribe(person => {
       this.dialog.open(PersonCardComponent, {
         data: {
           person: person,
@@ -104,11 +107,11 @@ export class FilmCardComponent implements OnInit {
         },
         disableClose: true
       });
-    });
+    }));
   }
 
   openStarshipCard(id) {
-    this.starshipService.getStarship(id).subscribe(starship => {
+    this.subscriptions.add(this.starshipService.getStarship(id).subscribe(starship => {
       this.dialog.open(StarshipCardComponent, {
         data: {
           starship: starship,
@@ -116,11 +119,11 @@ export class FilmCardComponent implements OnInit {
         },
         disableClose: true
       });
-    });
+    }));
   }
 
   openPlanetCard(id) {
-    this.planetService.getPlanet(id).subscribe(planet => {
+    this.subscriptions.add(this.planetService.getPlanet(id).subscribe(planet => {
       this.dialog.open(PlanetCardComponent, {
         data: {
           planet: planet,
@@ -128,11 +131,11 @@ export class FilmCardComponent implements OnInit {
         },
         disableClose: true
       });
-    });
+    }));
   }
 
   openSpeciesCard(id) {
-    this.speciesService.getKind(id).subscribe(species => {
+    this.subscriptions.add(this.speciesService.getKind(id).subscribe(species => {
       this.dialog.open(SpeciesCardComponent, {
         data: {
           species: species,
@@ -140,6 +143,10 @@ export class FilmCardComponent implements OnInit {
         },
         disableClose: true
       });
-    });
+    }));
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 }

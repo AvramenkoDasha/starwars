@@ -1,6 +1,14 @@
-import {AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {MatTableDataSource} from '@angular/material/table';
-import {Subject} from 'rxjs';
+import {Subject, Subscription} from 'rxjs';
 import {MatPaginator} from '@angular/material/paginator';
 import {debounceTime} from 'rxjs/operators';
 import {MatDialog} from '@angular/material/dialog';
@@ -13,7 +21,7 @@ import {PlanetService} from '../services/planet.service';
   styleUrls: ['./planets.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PlanetsComponent implements OnInit, AfterViewInit {
+export class PlanetsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   columns = [{
     name: 'name',
@@ -34,25 +42,27 @@ export class PlanetsComponent implements OnInit, AfterViewInit {
   pageSize;
   sortedHeader;
 
+  public subscriptions: Subscription = new Subscription();
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   constructor(private planetService: PlanetService, public dialog: MatDialog, private cd: ChangeDetectorRef) { }
 
   ngOnInit(): void {
-    this.planetService.getPlanets().subscribe(planets => {
+    this.subscriptions.add(this.planetService.getPlanets().subscribe(planets => {
       this.dataSource.data = planets;
       this.dataSource.paginator = this.paginator;
-    });
+    }));
 
     this.sortedHeader = JSON.parse(sessionStorage.getItem('planetsSort'));
 
-    this.search$
+    this.subscriptions.add(this.search$
       .pipe(
         debounceTime(300)
       )
       .subscribe((value: string) => {
         this.applyFilter(value);
-      });
+      }));
   }
 
   applyFilter(filterValue: string) {
@@ -68,14 +78,14 @@ export class PlanetsComponent implements OnInit, AfterViewInit {
   }
 
   openDialog(row: any) {
-    this.planetService.getPlanet(row.id).subscribe(planet => {
+    this.subscriptions.add(this.planetService.getPlanet(row.id).subscribe(planet => {
       this.dialog.open(PlanetCardComponent, {
         data: {
           planet: planet
         },
         disableClose: true
       });
-    });
+    }));
   }
 
   onPaginateChange(event) {
@@ -96,5 +106,9 @@ export class PlanetsComponent implements OnInit, AfterViewInit {
     this.dataSource.filter = sessionStorage.getItem('planetsSearch');
     this.search$.next(sessionStorage.getItem('planetsSearch'));
     this.cd.detectChanges();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 }
